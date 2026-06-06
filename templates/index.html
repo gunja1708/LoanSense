@@ -108,10 +108,18 @@
   footer { background: #050f22; padding: 2rem 4rem; display: flex; justify-content: space-between; align-items: center; }
   .footer-logo { font-family: 'Playfair Display', serif; color: var(--white); font-size: 1.1rem; }
   .footer-text { color: rgba(255,255,255,0.3); font-size: 0.8rem; }
-  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
-  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .fade-up { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease, transform 0.6s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
 </style>
 </head>
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.05, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
 <body>
 <nav>
   <div class="nav-logo">

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoanSense — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0a1f44; --navy-mid: #12306b; --navy-light: #1a4494;
+    --gold: #c8a84b; --gold-light: #e8c97a;
+    --white: #ffffff; --off-white: #f4f6fb;
+    --text-muted: #6b7a99; --border: #dce3f0;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--off-white); min-height: 100vh; display: flex; }
+
+  /* LEFT PANEL */
+  .left-panel {
+    width: 45%; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    display: flex; flex-direction: column; justify-content: center; padding: 4rem;
+    position: relative; overflow: hidden;
+  }
+  .left-panel::before {
+    content: ''; position: absolute; width: 500px; height: 500px;
+    border-radius: 50%; background: rgba(200,168,75,0.06);
+    top: -150px; right: -150px; pointer-events: none;
+  }
+  .left-panel::after {
+    content: ''; position: absolute; width: 300px; height: 300px;
+    border-radius: 50%; background: rgba(200,168,75,0.04);
+    bottom: -100px; left: -100px; pointer-events: none;
+  }
+  .left-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 3rem; position: relative; z-index: 1; }
+  .left-logo-icon { width: 40px; height: 40px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .left-logo-text { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--white); font-weight: 700; }
+  .left-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--white); line-height: 1.2; margin-bottom: 1rem; position: relative; z-index: 1; }
+  .left-title span { color: var(--gold); }
+  .left-sub { color: rgba(255,255,255,0.6); font-size: 0.95rem; line-height: 1.7; margin-bottom: 2.5rem; position: relative; z-index: 1; }
+  .left-features { display: flex; flex-direction: column; gap: 1rem; position: relative; z-index: 1; }
+  .left-feature { display: flex; align-items: center; gap: 12px; }
+  .left-feature-icon { width: 32px; height: 32px; background: rgba(200,168,75,0.15); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .left-feature-text { color: rgba(255,255,255,0.75); font-size: 0.875rem; }
+
+  /* RIGHT PANEL */
+  .right-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem; }
+  .login-card { background: var(--white); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 420px; border: 1px solid var(--border); }
+  .login-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--navy); margin-bottom: 0.4rem; }
+  .login-sub { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 2rem; }
+
+  /* TABS */
+  .tabs { display: flex; background: var(--off-white); border-radius: 8px; padding: 4px; margin-bottom: 1.75rem; }
+  .tab { flex: 1; text-align: center; padding: 0.5rem; border-radius: 6px; font-size: 0.875rem; cursor: pointer; color: var(--text-muted); transition: all 0.2s; border: none; background: transparent; font-family: 'DM Sans', sans-serif; }
+  .tab.active { background: var(--white); color: var(--navy); font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+  /* FORM */
+  .form-group { margin-bottom: 1.25rem; }
+  .form-label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--navy); margin-bottom: 0.4rem; }
+  .form-input {
+    width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border);
+    border-radius: 8px; font-size: 0.9rem; color: var(--navy);
+    font-family: 'DM Sans', sans-serif; transition: border-color 0.2s;
+    background: var(--white); outline: none;
+  }
+  .form-input:focus { border-color: var(--navy-light); }
+  .form-input::placeholder { color: var(--text-muted); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .forgot { text-align: right; margin-top: -0.75rem; margin-bottom: 1.25rem; }
+  .forgot a { font-size: 0.8rem; color: var(--navy-light); text-decoration: none; }
+  .forgot a:hover { color: var(--gold); }
+
+  /* BUTTON */
+  .btn-submit {
+    width: 100%; padding: 0.85rem; background: var(--navy);
+    color: var(--white); border: none; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 500; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    margin-bottom: 1.25rem;
+  }
+  .btn-submit:hover { background: var(--navy-light); transform: translateY(-1px); }
+
+  /* DIVIDER */
+  .divider { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text { font-size: 0.75rem; color: var(--text-muted); }
+
+  /* GOOGLE */
+  .btn-google {
+    width: 100%; padding: 0.75rem; background: var(--white);
+    color: var(--navy); border: 1px solid var(--border); border-radius: 8px;
+    font-size: 0.9rem; font-weight: 400; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .btn-google:hover { border-color: var(--navy-light); background: var(--off-white); }
+
+  .login-footer { text-align: center; font-size: 0.8rem; color: var(--text-muted); }
+  .login-footer a { color: var(--navy-light); text-decoration: none; font-weight: 500; }
+  .login-footer a:hover { color: var(--gold); }
+
+  /* FORM PANELS */
+  .form-panel { display: none; }
+  .form-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+  <div class="left-logo">
+    <div class="left-logo-icon">🏦</div>
+    <span class="left-logo-text">LoanSense</span>
+  </div>
+  <h2 class="left-title">Your Loan Journey<br><span>Starts Here</span></h2>
+  <p class="left-sub">Join thousands of Indian borrowers making smarter loan decisions with AI-powered insights.</p>
+  <div class="left-features">
+    <div class="left-feature">
+      <div class="left-feature-icon">⚡</div>
+      <span class="left-feature-text">Instant document verification</span>
+    </div>
+    <div class="left-feature">
+      <div class="left-feature-icon">📊</div>
+      <span class="left-feature-text">5-year financial projection chart</span>
+    </div>
+    <div class="left-feature">
+      <div class="left-feature-icon">🗣️</div>
+      <span class="left-feature-text">Hindi + English AI assistant</span>
+    </div>
+    <div class="left-feature">
+      <div class="left-feature-icon">🏦</div>
+      <span class="left-feature-text">Compare SBI, HDFC, ICICI rates</span>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <div class="login-card">
+    <h2 class="login-title">Welcome Back</h2>
+    <p class="login-sub">Sign in to your LoanSense account</p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login', this)">Sign In</button>
+      <button class="tab" onclick="switchTab('register', this)">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="form-panel active" id="login-panel">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" placeholder="Enter your password">
+      </div>
+      <div class="forgot"><a href="#">Forgot password?</a></div>
+      <button class="btn-submit" onclick="window.location.href='/dashboard'">Sign In to LoanSense</button>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or continue with</span>
+        <div class="divider-line"></div>
+      </div>
+      <button class="btn-google">
+        <span>🇬</span> Sign in with Google
+      </button>
+      <div class="login-footer">
+        Don't have an account? <a href="#" onclick="switchTab('register', document.querySelectorAll('.tab')[1])">Register here</a>
+      </div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="form-panel" id="register-panel">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-input" placeholder="Rahul">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-input" placeholder="Sharma">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" placeholder="Create a strong password">
+      </div>
+      <button class="btn-submit" onclick="window.location.href='/dashboard'">Create Account</button>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or continue with</span>
+        <div class="divider-line"></div>
+      </div>
+      <button class="btn-google">
+        <span>🇬</span> Sign up with Google
+      </button>
+      <div class="login-footer">
+        Already have an account? <a href="#" onclick="switchTab('login', document.querySelectorAll('.tab')[0])">Sign in here</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(tab + '-panel').classList.add('active');
+  document.querySelector('.login-title').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
+  document.querySelector('.login-sub').textContent = tab === 'login' ? 'Sign in to your LoanSense account' : 'Start your smart loan journey today';
+}
+</script>
+</body>
+</html>
