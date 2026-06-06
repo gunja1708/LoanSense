@@ -1,0 +1,5 @@
+google-genai
+python-dotenv
+pypdf2
+matplotlib
+flask
