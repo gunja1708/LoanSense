@@ -102,6 +102,15 @@
   /* FORM PANELS */
   .form-panel { display: none; }
   .form-panel.active { display: block; }
+  @media (max-width: 768px) {
+  body { flex-direction: column; }
+  .left-panel { width: 100%; min-height: auto; padding: 2rem 1.5rem; }
+  .left-features { display: none; }
+  .left-title { font-size: 1.5rem; }
+  .left-sub { display: none; }
+  .right-panel { padding: 1.5rem; }
+  .form-row { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
