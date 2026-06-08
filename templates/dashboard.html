@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoanSense — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0a1f44; --navy-mid: #12306b; --navy-light: #1a4494;
+    --gold: #c8a84b; --gold-light: #e8c97a;
+    --white: #ffffff; --off-white: #f4f6fb;
+    --text-muted: #6b7a99; --border: #dce3f0;
+    --success: #16a34a; --danger: #dc2626;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--off-white); display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px; background: var(--navy); min-height: 100vh;
+    display: flex; flex-direction: column; padding: 1.5rem 0;
+    position: fixed; left: 0; top: 0;
+  }
+  .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 1.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 1.5rem; }
+  .sidebar-logo-icon { width: 34px; height: 34px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .sidebar-logo-text { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--white); }
+  .sidebar-label { font-size: 0.7rem; color: rgba(255,255,255,0.3); font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; padding: 0 1.5rem; margin-bottom: 0.5rem; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 0.7rem 1.5rem; color: rgba(255,255,255,0.6);
+    font-size: 0.875rem; cursor: pointer; transition: all 0.2s;
+    text-decoration: none; border-left: 3px solid transparent;
+  }
+  .sidebar-item:hover { color: var(--white); background: rgba(255,255,255,0.05); }
+  .sidebar-item.active { color: var(--white); background: rgba(200,168,75,0.1); border-left-color: var(--gold); }
+  .sidebar-item-icon { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-bottom { margin-top: auto; padding: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); }
+  .sidebar-user { display: flex; align-items: center; gap: 10px; }
+  .sidebar-avatar { width: 34px; height: 34px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: var(--navy); }
+  .sidebar-user-name { font-size: 0.875rem; color: var(--white); font-weight: 500; }
+  .sidebar-user-role { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+
+  /* MAIN */
+  .main { margin-left: 240px; flex: 1; padding: 2rem; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--navy); }
+  .topbar-sub { font-size: 0.875rem; color: var(--text-muted); margin-top: 2px; }
+  .topbar-actions { display: flex; align-items: center; gap: 1rem; }
+  .btn-gold { background: var(--gold); color: var(--navy); padding: 0.6rem 1.25rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+  .btn-gold:hover { background: var(--gold-light); }
+
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--white); border-radius: 12px; padding: 1.25rem; border: 1px solid var(--border); }
+  .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--navy); font-weight: 700; }
+  .stat-change { font-size: 0.75rem; margin-top: 4px; }
+  .stat-change.up { color: var(--success); }
+  .stat-change.down { color: var(--danger); }
+
+  /* GRID */
+  .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .card { background: var(--white); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border); }
+  .card-title { font-size: 0.95rem; font-weight: 500; color: var(--navy); margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+  .card-badge { font-size: 0.7rem; background: rgba(200,168,75,0.1); color: var(--gold); padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 500; }
+
+  /* DOCUMENT UPLOAD */
+  .upload-zone {
+    border: 2px dashed var(--border); border-radius: 10px;
+    padding: 2rem; text-align: center; cursor: pointer;
+    transition: all 0.2s; margin-bottom: 1rem;
+  }
+  .upload-zone:hover { border-color: var(--navy-light); background: rgba(26,68,148,0.02); }
+  .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .upload-text { font-size: 0.875rem; color: var(--text-muted); }
+  .upload-text strong { color: var(--navy-light); }
+  .doc-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .doc-row { display: flex; align-items: center; gap: 10px; padding: 0.6rem 0.75rem; background: var(--off-white); border-radius: 8px; }
+  .doc-row-icon { font-size: 14px; }
+  .doc-row-name { font-size: 0.8rem; color: var(--navy); flex: 1; }
+  .doc-row-status { font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 4px; }
+  .verified { background: rgba(22,163,74,0.1); color: var(--success); }
+  .pending { background: rgba(200,168,75,0.1); color: var(--gold); }
+  .failed { background: rgba(220,38,38,0.1); color: var(--danger); }
+
+  /* EMI CALCULATOR */
+  .calc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .calc-group { display: flex; flex-direction: column; gap: 4px; }
+  .calc-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+  .calc-input { padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.875rem; color: var(--navy); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+  .calc-input:focus { border-color: var(--navy-light); }
+  .calc-result { background: linear-gradient(135deg, var(--navy), var(--navy-mid)); border-radius: 10px; padding: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .calc-result-item { text-align: center; }
+  .calc-result-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+  .calc-result-value { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); font-weight: 700; }
+
+  /* CHATBOT */
+  .chat-messages { height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; padding-right: 4px; }
+  .chat-msg { max-width: 85%; }
+  .chat-msg.user { align-self: flex-end; }
+  .chat-msg.bot { align-self: flex-start; }
+  .chat-bubble { padding: 0.6rem 0.9rem; border-radius: 10px; font-size: 0.8rem; line-height: 1.5; }
+  .chat-msg.user .chat-bubble { background: var(--navy); color: var(--white); }
+  .chat-msg.bot .chat-bubble { background: var(--off-white); color: var(--navy); border: 1px solid var(--border); }
+  .chat-input-row { display: flex; gap: 8px; }
+  .chat-input { flex: 1; padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.8rem; font-family: 'DM Sans', sans-serif; outline: none; }
+  .chat-input:focus { border-color: var(--navy-light); }
+  .chat-send { background: var(--navy); color: var(--white); border: none; border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.8rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
+  .chat-send:hover { background: var(--navy-light); }
+
+  /* PROJECTION */
+  .projection-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+  .projection-bar-container { margin-bottom: 0.5rem; }
+  .projection-bar-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--navy); margin-bottom: 3px; }
+  .projection-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .projection-fill { height: 100%; border-radius: 4px; }
+  .fill-emi { background: #e74c3c; }
+  .fill-savings { background: #2ecc71; }
+  .fill-expenses { background: #f39c12; }
+  .projection-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-top: 1rem; }
+  .proj-stat { background: var(--off-white); border-radius: 8px; padding: 0.75rem; text-align: center; }
+  .proj-stat-label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; }
+  .proj-stat-value { font-size: 0.95rem; font-weight: 500; color: var(--navy); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏦</div>
+    <span class="sidebar-logo-text">LoanSense</span>
+  </div>
+  <div class="sidebar-label">Main Menu</div>
+  <a class="sidebar-item active" href="/dashboard">
+    <span class="sidebar-item-icon">📊</span> Dashboard
+  </a>
+  <a class="sidebar-item" href="#">
+    <span class="sidebar-item-icon">📄</span> Documents
+  </a>
+  <a class="sidebar-item" href="#">
+    <span class="sidebar-item-icon">🤖</span> AI Assistant
+  </a>
+  <a class="sidebar-item" href="#">
+    <span class="sidebar-item-icon">📈</span> Projections
+  </a>
+  <a class="sidebar-item" href="#">
+    <span class="sidebar-item-icon">🏦</span> Bank Compare
+  </a>
+  <div class="sidebar-label" style="margin-top:1.5rem">Account</div>
+  <a class="sidebar-item" href="#">
+    <span class="sidebar-item-icon">⚙️</span> Settings
+  </a>
+  <a class="sidebar-item" href="/">
+    <span class="sidebar-item-icon">🚪</span> Logout
+  </a>
+  <div class="sidebar-bottom">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">G</div>
+      <div>
+        <div class="sidebar-user-name">Gunja</div>
+        <div class="sidebar-user-role">Free Plan</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Good Morning, Gunja 👋</div>
+      <div class="topbar-sub">Here's your loan overview for today</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-gold">+ Upload Document</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Eligibility Score</div>
+      <div class="stat-value">87/100</div>
+      <div class="stat-change up">↑ Good standing</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Monthly EMI</div>
+      <div class="stat-value">₹14,200</div>
+      <div class="stat-change up">↑ Affordable</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Documents</div>
+      <div class="stat-value">3/4</div>
+      <div class="stat-change down">↓ 1 pending</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Debt-Free In</div>
+      <div class="stat-value">5 Yrs</div>
+      <div class="stat-change up">↑ On track</div>
+    </div>
+  </div>
+
+  <!-- ROW 1 -->
+  <div class="dashboard-grid">
+
+    <!-- DOCUMENT VERIFIER -->
+    <div class="card">
+      <div class="card-title">
+        Document Verifier
+        <span class="card-badge">Module 1</span>
+      </div>
+      <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-icon">📤</div>
+        <div class="upload-text"><strong>Click to upload</strong> or drag & drop</div>
+        <div class="upload-text" style="font-size:0.75rem;margin-top:4px">Aadhaar, PAN, Form 16, Bank Statement</div>
+        <input type="file" id="fileInput" style="display:none">
+      </div>
+      <div class="doc-list">
+        <div class="doc-row">
+          <span class="doc-row-icon">📄</span>
+          <span class="doc-row-name">Aadhaar_Card.pdf</span>
+          <span class="doc-row-status verified">✓ Verified</span>
+        </div>
+        <div class="doc-row">
+          <span class="doc-row-icon">🪪</span>
+          <span class="doc-row-name">PAN_Card.pdf</span>
+          <span class="doc-row-status verified">✓ Verified</span>
+        </div>
+        <div class="doc-row">
+          <span class="doc-row-icon">🏦</span>
+          <span class="doc-row-name">Bank_Statement.pdf</span>
+          <span class="doc-row-status pending">⏳ Pending</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMI CALCULATOR -->
+    <div class="card">
+      <div class="card-title">
+        EMI Calculator
+        <span class="card-badge">Module 3</span>
+      </div>
+      <div class="calc-row">
+        <div class="calc-group">
+          <label class="calc-label">Loan Amount (₹)</label>
+          <input type="number" class="calc-input" id="loanAmt" value="500000" oninput="calcEMI()">
+        </div>
+        <div class="calc-group">
+          <label class="calc-label">Interest Rate (%)</label>
+          <input type="number" class="calc-input" id="rate" value="10" oninput="calcEMI()">
+        </div>
+        <div class="calc-group">
+          <label class="calc-label">Tenure (Years)</label>
+          <input type="number" class="calc-input" id="tenure" value="5" oninput="calcEMI()">
+        </div>
+        <div class="calc-group">
+          <label class="calc-label">Monthly Income (₹)</label>
+          <input type="number" class="calc-input" id="income" value="60000" oninput="calcEMI()">
+        </div>
+      </div>
+      <div class="calc-result">
+        <div class="calc-result-item">
+          <div class="calc-result-label">Monthly EMI</div>
+          <div class="calc-result-value" id="emiResult">₹10,624</div>
+        </div>
+        <div class="calc-result-item">
+          <div class="calc-result-label">Total Interest</div>
+          <div class="calc-result-value" id="interestResult">₹1,37,480</div>
+        </div>
+        <div class="calc-result-item">
+          <div class="calc-result-label">Total Payment</div>
+          <div class="calc-result-value" id="totalResult">₹6,37,480</div>
+        </div>
+        <div class="calc-result-item">
+          <div class="calc-result-label">EMI/Income Ratio</div>
+          <div class="calc-result-value" id="ratioResult">17.7%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 2 -->
+  <div class="dashboard-grid">
+
+    <!-- CHATBOT -->
+    <div class="card">
+      <div class="card-title">
+        AI Loan Assistant
+        <span class="card-badge">Module 2</span>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg bot">
+          <div class="chat-bubble">नमस्ते! मैं LoanSense AI हूँ। आप मुझसे लोन के बारे में हिंदी या English में पूछ सकते हैं। 🙏</div>
+        </div>
+        <div class="chat-msg user">
+          <div class="chat-bubble">Am I eligible for a home loan?</div>
+        </div>
+        <div class="chat-msg bot">
+          <div class="chat-bubble">Based on your profile, you have an eligibility score of 87/100. With a monthly income of ₹60,000, you can get a home loan up to ₹25 lakhs. SBI currently offers the best rate at 8.5%.</div>
+        </div>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Ask in Hindi or English..." onkeypress="if(event.key==='Enter') sendChat()">
+        <button class="chat-send" onclick="sendChat()">Send →</button>
+      </div>
+    </div>
+
+    <!-- PROJECTION -->
+    <div class="card">
+      <div class="card-title">
+        5-Year Projection
+        <span class="card-badge">Module 3</span>
+      </div>
+      <div class="projection-inputs">
+        <div class="calc-group">
+          <label class="calc-label">Income (₹)</label>
+          <input type="number" class="calc-input" id="projIncome" value="60000" oninput="updateProjection()">
+        </div>
+        <div class="calc-group">
+          <label class="calc-label">Expenses (₹)</label>
+          <input type="number" class="calc-input" id="projExpenses" value="20000" oninput="updateProjection()">
+        </div>
+        <div class="calc-group">
+          <label class="calc-label">EMI (₹)</label>
+          <input type="number" class="calc-input" id="projEMI" value="14200" oninput="updateProjection()">
+        </div>
+      </div>
+      <div id="projectionBars"></div>
+      <div class="projection-summary" id="projectionSummary"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function calcEMI() {
+  const P = parseFloat(document.getElementById('loanAmt').value) || 0;
+  const r = (parseFloat(document.getElementById('rate').value) || 0) / 12 / 100;
+  const n = (parseFloat(document.getElementById('tenure').value) || 0) * 12;
+  const income = parseFloat(document.getElementById('income').value) || 1;
+  if (!P || !r || !n) return;
+  const emi = P * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  const total = emi * n;
+  const interest = total - P;
+  document.getElementById('emiResult').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
+  document.getElementById('interestResult').textContent = '₹' + Math.round(interest).toLocaleString('en-IN');
+  document.getElementById('totalResult').textContent = '₹' + Math.round(total).toLocaleString('en-IN');
+  document.getElementById('ratioResult').textContent = (emi/income*100).toFixed(1) + '%';
+}
+
+function updateProjection() {
+  const income = parseFloat(document.getElementById('projIncome').value) || 0;
+  const expenses = parseFloat(document.getElementById('projExpenses').value) || 0;
+  const emi = parseFloat(document.getElementById('projEMI').value) || 0;
+  const savings = income - expenses - emi;
+  const emiPct = Math.min((emi/income)*100, 100);
+  const expPct = Math.min((expenses/income)*100, 100);
+  const savPct = Math.max((savings/income)*100, 0);
+  document.getElementById('projectionBars').innerHTML = `
+    <div class="projection-bar-container">
+      <div class="projection-bar-label"><span>EMI Burden</span><span>₹${emi.toLocaleString('en-IN')}</span></div>
+      <div class="projection-bar"><div class="projection-fill fill-emi" style="width:${emiPct}%"></div></div>
+    </div>
+    <div class="projection-bar-container">
+      <div class="projection-bar-label"><span>Expenses</span><span>₹${expenses.toLocaleString('en-IN')}</span></div>
+      <div class="projection-bar"><div class="projection-fill fill-expenses" style="width:${expPct}%"></div></div>
+    </div>
+    <div class="projection-bar-container">
+      <div class="projection-bar-label"><span>Monthly Savings</span><span>₹${Math.max(savings,0).toLocaleString('en-IN')}</span></div>
+      <div class="projection-bar"><div class="projection-fill fill-savings" style="width:${savPct}%"></div></div>
+    </div>
+  `;
+  const annual = savings * 12;
+  const fiveYear = savings * 60;
+  document.getElementById('projectionSummary').innerHTML = `
+    <div class="proj-stat">
+      <div class="proj-stat-label">Monthly Savings</div>
+      <div class="proj-stat-value" style="color:var(--success)">₹${Math.max(savings,0).toLocaleString('en-IN')}</div>
+    </div>
+    <div class="proj-stat">
+      <div class="proj-stat-label">Annual Savings</div>
+      <div class="proj-stat-value">₹${Math.max(annual,0).toLocaleString('en-IN')}</div>
+    </div>
+    <div class="proj-stat">
+      <div class="proj-stat-label">5-Year Total</div>
+      <div class="proj-stat-value" style="color:var(--gold)">₹${Math.max(fiveYear,0).toLocaleString('en-IN')}</div>
+    </div>
+  `;
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  const messages = document.getElementById('chatMessages');
+  messages.innerHTML += `<div class="chat-msg user"><div class="chat-bubble">${msg}</div></div>`;
+  input.value = '';
+  setTimeout(() => {
+    messages.innerHTML += `<div class="chat-msg bot"><div class="chat-bubble">Thank you for your question! The AI assistant will be connected soon. For now, your eligibility score is 87/100 and you qualify for loans up to ₹25 lakhs. 🏦</div></div>`;
+    messages.scrollTop = messages.scrollHeight;
+  }, 800);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+calcEMI();
+updateProjection();
+</script>
+</body>
+</html>
