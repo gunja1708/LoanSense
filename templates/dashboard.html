@@ -174,9 +174,9 @@
   </a>
   <div class="sidebar-bottom">
     <div class="sidebar-user">
-      <div class="sidebar-avatar">G</div>
+    <div class="sidebar-avatar">{{ user.first_name[0] }}</div>
       <div>
-        <div class="sidebar-user-name">Gunja</div>
+        <div class="sidebar-avatar">{{ user.first_name[0] }}</div>
         <div class="sidebar-user-role">Free Plan</div>
       </div>
     </div>
@@ -187,7 +187,7 @@
 <div class="main">
   <div class="topbar">
     <div>
-      <div class="topbar-title">Good Morning, Gunja 👋</div>
+      <div class="topbar-title">Good Morning, {{ user.first_name }} 👋</div>
       <div class="topbar-sub">Here's your loan overview for today</div>
     </div>
     <div class="topbar-actions">
