@@ -240,6 +240,222 @@ def calculate_max_loan_amount(income, existing_emis, annual_rate, tenure_years):
     n = tenure_years * 12
     max_loan = max_emi * ((1 + monthly_rate) ** n - 1) / (monthly_rate * (1 + monthly_rate) ** n)
     return round(max_loan)
+# Real Document Requirements by Loan Type
+DOCUMENT_REQUIREMENTS = {
+    "home_loan": {
+        "name": "Home Loan",
+        "icon": "🏠",
+        "documents": [
+            {
+                "name": "Aadhaar Card",
+                "category": "Identity Proof",
+                "mandatory": True,
+                "description": "Both sides required. Must be linked to mobile number.",
+                "accepted_formats": "PDF, JPG, PNG"
+            },
+            {
+                "name": "PAN Card",
+                "category": "Identity Proof",
+                "mandatory": True,
+                "description": "Required for loans above ₹50,000 as per RBI guidelines.",
+                "accepted_formats": "PDF, JPG, PNG"
+            },
+            {
+                "name": "Last 3 Months Salary Slips",
+                "category": "Income Proof",
+                "mandatory": True,
+                "description": "Must show gross salary, deductions and net pay clearly.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Last 6 Months Bank Statement",
+                "category": "Income Proof",
+                "mandatory": True,
+                "description": "Primary salary account. Must show regular salary credits.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Form 16 (Last 2 Years)",
+                "category": "Income Proof",
+                "mandatory": True,
+                "description": "Issued by employer. Required for salaried individuals.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Property Documents",
+                "category": "Property Proof",
+                "mandatory": True,
+                "description": "Sale agreement, title deed, NOC from builder.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Passport Size Photos",
+                "category": "Other",
+                "mandatory": True,
+                "description": "Recent photographs, white background.",
+                "accepted_formats": "JPG, PNG"
+            },
+            {
+                "name": "Employment Certificate",
+                "category": "Employment Proof",
+                "mandatory": False,
+                "description": "Letter from employer confirming current employment.",
+                "accepted_formats": "PDF"
+            }
+        ]
+    },
+    "education_loan": {
+        "name": "Education Loan",
+        "icon": "🎓",
+        "documents": [
+            {
+                "name": "Aadhaar Card (Student + Parent)",
+                "category": "Identity Proof",
+                "mandatory": True,
+                "description": "Both student and co-applicant (parent/guardian) Aadhaar required.",
+                "accepted_formats": "PDF, JPG, PNG"
+            },
+            {
+                "name": "PAN Card (Student + Parent)",
+                "category": "Identity Proof",
+                "mandatory": True,
+                "description": "PAN of both student and co-applicant required.",
+                "accepted_formats": "PDF, JPG, PNG"
+            },
+            {
+                "name": "Admission Letter",
+                "category": "Academic Proof",
+                "mandatory": True,
+                "description": "Official admission letter from the institution with fee structure.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Mark Sheets (10th, 12th, Graduation)",
+                "category": "Academic Proof",
+                "mandatory": True,
+                "description": "All previous academic records required.",
+                "accepted_formats": "PDF, JPG"
+            },
+            {
+                "name": "Fee Structure Document",
+                "category": "Academic Proof",
+                "mandatory": True,
+                "description": "Complete fee structure from institution for entire course.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Parent's Income Proof",
+                "category": "Income Proof",
+                "mandatory": True,
+                "description": "Salary slips or ITR of parent/guardian for last 2 years.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Bank Statement (6 Months)",
+                "category": "Income Proof",
+                "mandatory": True,
+                "description": "Parent's primary bank account statements.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Scholarship Letter (if any)",
+                "category": "Other",
+                "mandatory": False,
+                "description": "Any scholarship or financial aid received.",
+                "accepted_formats": "PDF"
+            }
+        ]
+    },
+    "car_loan": {
+        "name": "Car Loan",
+        "icon": "🚗",
+        "documents": [
+            {
+                "name": "Aadhaar Card",
+                "category": "Identity Proof",
+                "mandatory": True,
+                "description": "Valid Aadhaar card required.",
+                "accepted_formats": "PDF, JPG, PNG"
+            },
+            {
+                "name": "PAN Card",
+                "category": "Identity Proof",
+                "mandatory": True,
+                "description": "Required for all car loans.",
+                "accepted_formats": "PDF, JPG, PNG"
+            },
+            {
+                "name": "Last 3 Months Salary Slips",
+                "category": "Income Proof",
+                "mandatory": True,
+                "description": "Latest salary slips showing net take-home pay.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Last 6 Months Bank Statement",
+                "category": "Income Proof",
+                "mandatory": True,
+                "description": "Salary account bank statements.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Car Proforma Invoice",
+                "category": "Vehicle Proof",
+                "mandatory": True,
+                "description": "Quotation from car dealer with vehicle details and price.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Driving License",
+                "category": "Other",
+                "mandatory": False,
+                "description": "Valid driving license of applicant.",
+                "accepted_formats": "PDF, JPG, PNG"
+            }
+        ]
+    },
+    "personal_loan": {
+        "name": "Personal Loan",
+        "icon": "💰",
+        "documents": [
+            {
+                "name": "Aadhaar Card",
+                "category": "Identity Proof",
+                "mandatory": True,
+                "description": "Valid Aadhaar card required.",
+                "accepted_formats": "PDF, JPG, PNG"
+            },
+            {
+                "name": "PAN Card",
+                "category": "Identity Proof",
+                "mandatory": True,
+                "description": "Required for all personal loans.",
+                "accepted_formats": "PDF, JPG, PNG"
+            },
+            {
+                "name": "Last 3 Months Salary Slips",
+                "category": "Income Proof",
+                "mandatory": True,
+                "description": "Latest salary slips required.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Last 3 Months Bank Statement",
+                "category": "Income Proof",
+                "mandatory": True,
+                "description": "Primary salary account statements.",
+                "accepted_formats": "PDF"
+            },
+            {
+                "name": "Employment ID Card",
+                "category": "Employment Proof",
+                "mandatory": False,
+                "description": "Company ID card for identity verification.",
+                "accepted_formats": "JPG, PNG"
+            }
+        ]
+    }
+}
 
 
 if __name__ == "__main__":

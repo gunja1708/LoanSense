@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoanSense — Setup Your Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0a1f44; --navy-mid: #12306b; --navy-light: #1a4494;
+    --gold: #c8a84b; --gold-light: #e8c97a;
+    --white: #ffffff; --off-white: #f4f6fb;
+    --text-muted: #6b7a99; --border: #dce3f0;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--off-white); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .onboard-card { background: var(--white); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 560px; border: 1px solid var(--border); }
+  .onboard-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 2rem; }
+  .onboard-logo-icon { width: 36px; height: 36px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .onboard-logo-text { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--navy); }
+  .onboard-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--navy); margin-bottom: 0.4rem; }
+  .onboard-sub { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 2rem; line-height: 1.6; }
+  .steps { display: flex; gap: 8px; margin-bottom: 2rem; }
+  .step { flex: 1; height: 4px; border-radius: 2px; background: var(--border); }
+  .step.active { background: var(--gold); }
+  .step.done { background: var(--navy); }
+  .form-group { margin-bottom: 1.25rem; }
+  .form-label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--navy); margin-bottom: 0.4rem; }
+  .form-label span { color: var(--text-muted); font-weight: 400; }
+  .form-input { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; color: var(--navy); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+  .form-input:focus { border-color: var(--navy-light); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .loan-types { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.5rem; }
+  .loan-type { border: 1px solid var(--border); border-radius: 10px; padding: 1rem; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .loan-type:hover { border-color: var(--navy-light); }
+  .loan-type.selected { border-color: var(--gold); background: rgba(200,168,75,0.05); }
+  .loan-type-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .loan-type-name { font-size: 0.8rem; font-weight: 500; color: var(--navy); }
+  .loan-type input { display: none; }
+  .btn-submit { width: 100%; padding: 0.85rem; background: var(--navy); color: var(--white); border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+  .btn-submit:hover { background: var(--navy-light); }
+  .skip { text-align: center; margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted); }
+  .skip a { color: var(--navy-light); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="onboard-card">
+  <div class="onboard-logo">
+    <div class="onboard-logo-icon">🏦</div>
+    <span class="onboard-logo-text">LoanSense</span>
+  </div>
+  <div class="steps">
+    <div class="step done"></div>
+    <div class="step active"></div>
+    <div class="step"></div>
+  </div>
+  <h2 class="onboard-title">Set Up Your Profile</h2>
+  <p class="onboard-sub">Tell us about your finances so we can give you personalized loan recommendations and an accurate eligibility score.</p>
+
+  <form method="POST" action="/onboarding">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Monthly Income <span>(₹)</span></label>
+        <input type="number" name="monthly_income" class="form-input" placeholder="60000" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Monthly Expenses <span>(₹)</span></label>
+        <input type="number" name="monthly_expenses" class="form-input" placeholder="20000" required>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">CIBIL Score <span>(300–900, default 750 if unknown)</span></label>
+      <input type="number" name="cibil_score" class="form-input" placeholder="750" min="300" max="900">
+    </div>
+    <div class="form-group">
+      <label class="form-label">What loan are you looking for?</label>
+      <div class="loan-types">
+        <label class="loan-type selected" onclick="selectLoan(this)">
+          <input type="radio" name="loan_type" value="home_loan" checked>
+          <div class="loan-type-icon">🏠</div>
+          <div class="loan-type-name">Home Loan</div>
+        </label>
+        <label class="loan-type" onclick="selectLoan(this)">
+          <input type="radio" name="loan_type" value="education_loan">
+          <div class="loan-type-icon">🎓</div>
+          <div class="loan-type-name">Education Loan</div>
+        </label>
+        <label class="loan-type" onclick="selectLoan(this)">
+          <input type="radio" name="loan_type" value="car_loan">
+          <div class="loan-type-icon">🚗</div>
+          <div class="loan-type-name">Car Loan</div>
+        </label>
+        <label class="loan-type" onclick="selectLoan(this)">
+          <input type="radio" name="loan_type" value="personal_loan">
+          <div class="loan-type-icon">💰</div>
+          <div class="loan-type-name">Personal Loan</div>
+        </label>
+      </div>
+    </div>
+    <button type="submit" class="btn-submit">Calculate My Eligibility →</button>
+  </form>
+  <div class="skip"><a href="/dashboard">Skip for now</a></div>
+</div>
+
+<script>
+function selectLoan(el) {
+  document.querySelectorAll('.loan-type').forEach(l => l.classList.remove('selected'));
+  el.classList.add('selected');
+}
+</script>
+</body>
+</html>
