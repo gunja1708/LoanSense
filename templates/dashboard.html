@@ -153,9 +153,9 @@
   <a class="sidebar-item active" href="/dashboard">
     <span class="sidebar-item-icon">📊</span> Dashboard
   </a>
-  <a class="sidebar-item" href="#">
-    <span class="sidebar-item-icon">📄</span> Documents
-  </a>
+  <a class="sidebar-item" href="/documents">
+  <span class="sidebar-item-icon">📄</span> Documents
+</a>
   <a class="sidebar-item" href="#">
     <span class="sidebar-item-icon">🤖</span> AI Assistant
   </a>
@@ -197,28 +197,27 @@
 
   <!-- STATS -->
   <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Eligibility Score</div>
-      <div class="stat-value">87/100</div>
-      <div class="stat-change up">↑ Good standing</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Monthly EMI</div>
-      <div class="stat-value">₹14,200</div>
-      <div class="stat-change up">↑ Affordable</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Documents</div>
-      <div class="stat-value">3/4</div>
-      <div class="stat-change down">↓ 1 pending</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Debt-Free In</div>
-      <div class="stat-value">5 Yrs</div>
-      <div class="stat-change up">↑ On track</div>
-    </div>
+  <div class="stat-card">
+    <div class="stat-label">Eligibility Score</div>
+    <div class="stat-value">{{ eligibility_score }}/100</div>
+    <div class="stat-change up">↑ Good standing</div>
   </div>
-
+  <div class="stat-card">
+    <div class="stat-label">Monthly EMI</div>
+    <div class="stat-value">₹14,200</div>
+    <div class="stat-change up">↑ Affordable</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Documents</div>
+    <div class="stat-value">{{ uploaded_docs }}/{{ total_docs }}</div>
+    <div class="stat-change down">↓ {{ total_docs - uploaded_docs }} pending</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Debt-Free In</div>
+    <div class="stat-value">5 Yrs</div>
+    <div class="stat-change up">↑ On track</div>
+  </div>
+</div>
   <!-- ROW 1 -->
   <div class="dashboard-grid">
 
