@@ -16,7 +16,7 @@
 ![Dashboard](screenshots/dashboard.png)
 
 ### Bank Comparison
-![Bank Compare](screenshots/Bank Compare.png)
+![Bank Compare](screenshots/Bank_Compare.png)
 
 ---
 
