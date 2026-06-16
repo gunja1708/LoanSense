@@ -160,24 +160,7 @@ def dashboard():
                          docs_required=docs_required,
                          total_docs=total_docs,
                          uploaded_docs=0)
-<<<<<<< HEAD
-=======
-@app.route('/bank-compare')
-@login_required
-def bank_compare():
-    from data import BANK_DATA, get_best_bank
-    import json
-    loan_type = request.args.get('type', current_user.loan_type or "home_loan")
-    all_banks = get_best_bank(loan_type, 5000000, current_user.cibil_score or 750)
-    banks_json = json.dumps([{"name": b["name"], "rate": b["rate"]} for b in all_banks])
-    return render_template('bank_compare.html',
-                         user=current_user,
-                         banks=all_banks,
-                         loan_type=loan_type,
-                         bank_data=BANK_DATA,
-                         banks_json=banks_json)
 
->>>>>>> feature-bank-comparison
 @app.route('/logout')
 @login_required
 def logout():
