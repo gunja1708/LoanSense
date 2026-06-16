@@ -16,7 +16,11 @@
 ![Dashboard](screenshots/dashboard.png)
 
 ### Bank Comparison
+<<<<<<< HEAD
 ![Bank Compare](screenshots/Bank_Compare.png)
+=======
+![Bank Compare](screenshots/bank_compare.png)
+>>>>>>> feature-bank-comparison
 
 ---
 

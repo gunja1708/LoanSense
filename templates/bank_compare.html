@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoanSense — Bank Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0a1f44; --navy-mid: #12306b; --navy-light: #1a4494;
+    --gold: #c8a84b; --gold-light: #e8c97a;
+    --white: #ffffff; --off-white: #f4f6fb;
+    --text-muted: #6b7a99; --border: #dce3f0;
+    --success: #16a34a; --danger: #dc2626;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--off-white); display: flex; min-height: 100vh; }
+  .sidebar { width: 240px; background: var(--navy); min-height: 100vh; display: flex; flex-direction: column; padding: 1.5rem 0; position: fixed; left: 0; top: 0; }
+  .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 1.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 1.5rem; }
+  .sidebar-logo-icon { width: 34px; height: 34px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .sidebar-logo-text { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--white); }
+  .sidebar-label { font-size: 0.7rem; color: rgba(255,255,255,0.3); font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; padding: 0 1.5rem; margin-bottom: 0.5rem; }
+  .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 0.7rem 1.5rem; color: rgba(255,255,255,0.6); font-size: 0.875rem; cursor: pointer; transition: all 0.2s; text-decoration: none; border-left: 3px solid transparent; }
+  .sidebar-item:hover { color: var(--white); background: rgba(255,255,255,0.05); }
+  .sidebar-item.active { color: var(--white); background: rgba(200,168,75,0.1); border-left-color: var(--gold); }
+  .sidebar-item-icon { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-bottom { margin-top: auto; padding: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); }
+  .sidebar-user { display: flex; align-items: center; gap: 10px; }
+  .sidebar-avatar { width: 34px; height: 34px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: var(--navy); }
+  .sidebar-user-name { font-size: 0.875rem; color: var(--white); font-weight: 500; }
+  .sidebar-user-role { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+  .main { margin-left: 240px; flex: 1; padding: 2rem; max-width: calc(100vw - 240px); }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--navy); }
+  .topbar-sub { font-size: 0.875rem; color: var(--text-muted); margin-top: 2px; }
+  .loan-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .loan-tab { padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.875rem; cursor: pointer; border: 1px solid var(--border); background: var(--white); color: var(--text-muted); transition: all 0.2s; text-decoration: none; }
+  .loan-tab:hover { border-color: var(--navy-light); color: var(--navy); }
+  .loan-tab.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+  .best-pick { background: linear-gradient(135deg, var(--navy), var(--navy-mid)); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+  .best-pick-label { font-size: 0.75rem; color: var(--gold); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; }
+  .best-pick-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--white); margin-bottom: 0.25rem; }
+  .best-pick-reason { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+  .best-pick-rate { text-align: right; }
+  .best-pick-rate-label { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+  .best-pick-rate-value { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); font-weight: 700; }
+  .table-card { background: var(--white); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 1.5rem; }
+  .table-wrapper { overflow-x: auto; }
+  .table-header { display: grid; grid-template-columns: 200px 130px 130px 130px 1fr; padding: 1rem 1.5rem; background: var(--off-white); border-bottom: 1px solid var(--border); min-width: 700px; }
+  .th { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .bank-row { display: grid; grid-template-columns: 200px 130px 130px 130px 1fr; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.15s; min-width: 700px; }
+  .bank-row:last-child { border-bottom: none; }
+  .bank-row:hover { background: var(--off-white); }
+  .bank-row.best { background: rgba(200,168,75,0.04); }
+  .bank-name-cell { display: flex; align-items: center; gap: 12px; }
+  .bank-avatar { width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: var(--white); flex-shrink: 0; background: var(--navy); }
+  .bank-name { font-size: 0.9rem; font-weight: 500; color: var(--navy); }
+  .bank-type { font-size: 0.75rem; color: var(--text-muted); }
+  .bank-best-badge { font-size: 0.65rem; background: rgba(200,168,75,0.15); color: var(--gold); padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 6px; font-weight: 500; }
+  .rate-cell { font-size: 0.95rem; font-weight: 500; color: var(--navy); }
+  .td-muted { font-size: 0.85rem; color: var(--text-muted); }
+  .best-for-cell { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+  .emi-section { background: var(--white); border-radius: 14px; border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1.5rem; }
+  .emi-title { font-size: 0.95rem; font-weight: 500; color: var(--navy); margin-bottom: 1.25rem; }
+  .emi-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+  .emi-group { display: flex; flex-direction: column; gap: 4px; }
+  .emi-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+  .emi-input { padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.875rem; color: var(--navy); font-family: 'DM Sans', sans-serif; outline: none; }
+  .emi-input:focus { border-color: var(--navy-light); }
+  .emi-bars { display: flex; flex-direction: column; gap: 0.75rem; }
+  .emi-bar-row { display: flex; align-items: center; gap: 1rem; }
+  .emi-bar-label { width: 120px; font-size: 0.8rem; color: var(--navy); flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .emi-bar-track { flex: 1; max-width: 500px; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .emi-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .emi-bar-value { width: 90px; font-size: 0.8rem; color: var(--navy); font-weight: 500; text-align: right; flex-shrink: 0; }
+  .info-box { background: rgba(26,68,148,0.05); border: 1px solid rgba(26,68,148,0.15); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 10px; }
+  .info-box-icon { font-size: 1.1rem; flex-shrink: 0; }
+  .info-box-text { font-size: 0.85rem; color: var(--navy); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏦</div>
+    <span class="sidebar-logo-text">LoanSense</span>
+  </div>
+  <div class="sidebar-label">Main Menu</div>
+  <a class="sidebar-item" href="/dashboard"><span class="sidebar-item-icon">📊</span> Dashboard</a>
+  <a class="sidebar-item" href="/documents"><span class="sidebar-item-icon">📄</span> Documents</a>
+  <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🤖</span> AI Assistant</a>
+  <a class="sidebar-item" href="#"><span class="sidebar-item-icon">📈</span> Projections</a>
+  <a class="sidebar-item active" href="/bank-compare"><span class="sidebar-item-icon">🏦</span> Bank Compare</a>
+  <div class="sidebar-label" style="margin-top:1.5rem">Account</div>
+  <a class="sidebar-item" href="#"><span class="sidebar-item-icon">⚙️</span> Settings</a>
+  <a class="sidebar-item" href="/logout"><span class="sidebar-item-icon">🚪</span> Logout</a>
+  <div class="sidebar-bottom">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">{{ user.first_name[0] }}</div>
+      <div>
+        <div class="sidebar-user-name">{{ user.first_name }}</div>
+        <div class="sidebar-user-role">Free Plan</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Bank Comparison</div>
+      <div class="topbar-sub">Real June 2026 rates — updated from official bank websites</div>
+    </div>
+  </div>
+
+  <div class="loan-tabs">
+    <a href="/bank-compare?type=home_loan" class="loan-tab {% if loan_type == 'home_loan' %}active{% endif %}">🏠 Home Loan</a>
+    <a href="/bank-compare?type=education_loan" class="loan-tab {% if loan_type == 'education_loan' %}active{% endif %}">🎓 Education Loan</a>
+    <a href="/bank-compare?type=car_loan" class="loan-tab {% if loan_type == 'car_loan' %}active{% endif %}">🚗 Car Loan</a>
+    <a href="/bank-compare?type=personal_loan" class="loan-tab {% if loan_type == 'personal_loan' %}active{% endif %}">💰 Personal Loan</a>
+  </div>
+
+  {% if banks %}
+  <div class="best-pick">
+    <div>
+      <div class="best-pick-label">⭐ Best Pick for You</div>
+      <div class="best-pick-name">{{ banks[0].name }}</div>
+      <div class="best-pick-reason">{{ banks[0].best_for }}</div>
+    </div>
+    <div class="best-pick-rate">
+      <div class="best-pick-rate-label">Starting Rate</div>
+      <div class="best-pick-rate-value">{{ banks[0].rate }}%</div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="info-box">
+    <div class="info-box-icon">💡</div>
+    <div class="info-box-text">
+      Rates are floating and linked to RBI Repo Rate (6.25% as of June 2026). Your actual rate depends on CIBIL score, income, and employer category. Always verify directly with the bank before applying.
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-wrapper">
+      <div class="table-header">
+        <div class="th">Bank</div>
+        <div class="th">Starting Rate</div>
+        <div class="th">Max Rate</div>
+        <div class="th">Type</div>
+        <div class="th">Best For</div>
+      </div>
+      {% for bank in banks %}
+      <div class="bank-row {% if loop.first %}best{% endif %}">
+        <div class="bank-name-cell">
+          <div class="bank-avatar">{{ bank.name[:2].upper() }}</div>
+          <div>
+            <div class="bank-name">
+              {{ bank.name }}
+              {% if loop.first %}<span class="bank-best-badge">Best Rate</span>{% endif %}
+            </div>
+            <div class="bank-type">{{ bank.type }}</div>
+          </div>
+        </div>
+        <div class="rate-cell">{{ bank.rate }}% p.a.</div>
+        <div class="rate-cell">{{ bank.max_rate }}% p.a.</div>
+        <div class="td-muted">{{ bank.type }}</div>
+        <div class="best-for-cell">{{ bank.best_for }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="emi-section">
+    <div class="emi-title">📊 EMI Comparison Calculator</div>
+    <div class="emi-inputs">
+      <div class="emi-group">
+        <label class="emi-label">Loan Amount (₹)</label>
+        <input type="number" class="emi-input" id="loanAmt" value="500000" oninput="updateEMIBars()">
+      </div>
+      <div class="emi-group">
+        <label class="emi-label">Tenure (Years)</label>
+        <input type="number" class="emi-input" id="tenure" value="5" oninput="updateEMIBars()">
+      </div>
+      <div class="emi-group">
+        <label class="emi-label">Your Income (₹)</label>
+        <input type="number" class="emi-input" id="income" value="{{ user.monthly_income or 60000 }}" oninput="updateEMIBars()">
+      </div>
+    </div>
+    <div class="emi-bars" id="emiBars"></div>
+  </div>
+</div>
+
+<script>
+var bankRates = {{ banks_json | safe }};
+var colors = ['#0a1f44', '#004C8F', '#F58220', '#97144D', '#6b7a99'];
+
+function calcEMI(P, r, n) {
+  var monthly = r / 12 / 100;
+  return P * monthly * Math.pow(1 + monthly, n) / (Math.pow(1 + monthly, n) - 1);
+}
+
+function updateEMIBars() {
+  var P = parseFloat(document.getElementById('loanAmt').value) || 500000;
+  var years = parseFloat(document.getElementById('tenure').value) || 5;
+  var n = years * 12;
+
+  var emis = bankRates.map(function(b) {
+    return { name: b.name.split(' ')[0], emi: calcEMI(P, b.rate, n) };
+  });
+
+  var maxEMI = Math.max.apply(null, emis.map(function(e) { return e.emi; }));
+
+  var html = '';
+  emis.forEach(function(b, i) {
+    var pct = (b.emi / maxEMI * 100).toFixed(1);
+    var emiFormatted = '₹' + Math.round(b.emi).toLocaleString('en-IN');
+    html += '<div class="emi-bar-row">' +
+      '<div class="emi-bar-label">' + b.name + '</div>' +
+      '<div class="emi-bar-track"><div class="emi-bar-fill" style="width:' + pct + '%;background:' + colors[i % colors.length] + '"></div></div>' +
+      '<div class="emi-bar-value">' + emiFormatted + '</div>' +
+      '</div>';
+  });
+  document.getElementById('emiBars').innerHTML = html;
+}
+
+updateEMIBars();
+</script>
+</body>
+</html>
